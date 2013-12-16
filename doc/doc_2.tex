@@ -86,30 +86,34 @@ Kroki tworzenia drzewa w algorytmie Kruskala:
 
 \subsection{Złożoność obliczeniowa}
 
-Przy obliczaniu złożoności obliczeniowej należy uwzględnić dwa etapy:
+Poszczególne fazy algorytmu mają złożoności równe:
 \begin{itemize}
 	\item sortowanie krawędzi według wag - złożoność O(ElogV)
-	\item O(E $\alpha$(E,V))
+	\item tworzenie drzewa - O(E $\alpha$(E,V))
 \end{itemize}
-gdzie E - liczba punktów \\
+Zatem całkowita złożoność algorytmu wynosi O(ElogV) \\ \\
+gdzie: \\ E - liczba punktów \\
 V - liczba krawędzi \\
 $\alpha$ - odwrotność funkcji Ackermanna
 
+
 \section{Implementacja}
 
-Projekt zostanie wykonany w języku Python, przy użyciu biblioteki Qt4. Założeniem programu jest działanie w czasie rzczywistym - użytkownik wprowadza przykładowy graf, następnie przechodząc przez kolejne ekrany może prześledzić kroki tworzenia minimalnego drzewa rozpinającego. Algorytm kończy działania, kiedy osiągnie minimalne drzewo rozpinające.
+Projekt zostanie wykonany w języku Python, przy użyciu biblioteki Qt4. Założeniem programu jest działanie w czasie rzczywistym - użytkownik wprowadza przykładowy graf, następnie przechodząc przez kolejne etapy może prześledzić kroki tworzenia minimalnego drzewa rozpinającego. Algorytm kończy działanie, gdy wyznaczy minimalne drzewo rozpinające.
 Przejście między kolejnymi krokami budowania drzewa będzie dla użytkownika niezauważalny, dlatego  czas wykonania algorytmu może zostać pominięty.
 
 \subsection{Struktury danych}
 
-Użytkownik będzie miał możliwość wczytania danych na dwa sposoby:
+Główną strukturą danych wykorzystywaną w projekcie będzie Graph z modułu networkx przeznaczonego dla grafów i sieci.
+
+\subsection{Format wejścia i wyjścia}
+
+Użytkownik będzie miał możliwość wprowadzenia danych na dwa sposoby:
 
 \begin{itemize}
 \item przez graficzny interfejs użytkownika (rysowanie punktów, krawędzi, podawanie wag)
-\item przez pliki tekstowe
+\item przez wczytanie plików tekstowych
 \end{itemize}
-
-\subsection{Format wejścia i wyjścia}
 
 Format pliku wejściowego:
 
@@ -117,12 +121,8 @@ Format pliku wejściowego:
 MACIERZ WAG \\
 
 1 1 1 0 \\
-3 4 2 1
-\end{center}
+3 4 2 1 \\
 
-Format pliku wyjściowego:
-
-\begin{center}
 WSPÓŁRZĘDNE WIERZCHOŁKÓW \\
 x y z \\
 x y z
