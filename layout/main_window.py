@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\GIS\layout\ui\main_window.ui'
 #
-# Created: Fri Jan 03 17:52:56 2014
+# Created: Sat Jan 04 12:51:36 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,12 +40,25 @@ class Ui_MainWindow(object):
         self.actionKruskal.setObjectName("actionKruskal")
         self.actionNext = QtGui.QAction(MainWindow)
         self.actionNext.setObjectName("actionNext")
+        self.actionSave_graph = QtGui.QAction(MainWindow)
+        self.actionSave_graph.setObjectName("actionSave_graph")
+        self.actionOpen_from_file = QtGui.QAction(MainWindow)
+        self.actionOpen_from_file.setObjectName("actionOpen_from_file")
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+        self.actionExport = QtGui.QAction(MainWindow)
+        self.actionExport.setObjectName("actionExport")
+        self.menuFile.addAction(self.actionExport)
+        self.menuFile.addAction(self.actionOpen_from_file)
+        self.menuFile.addAction(self.actionSave_graph)
+        self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
         self.toolBar.addAction(self.actionKruskal)
         self.toolBar.addAction(self.actionNext)
         self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
+        QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -56,4 +69,8 @@ class Ui_MainWindow(object):
         self.actionKruskal.setToolTip(QtGui.QApplication.translate("MainWindow", "Kruskall algorithm", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNext.setText(QtGui.QApplication.translate("MainWindow", "Next", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNext.setToolTip(QtGui.QApplication.translate("MainWindow", "Next step", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_graph.setText(QtGui.QApplication.translate("MainWindow", "Save to image file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen_from_file.setText(QtGui.QApplication.translate("MainWindow", "Import graph", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExport.setText(QtGui.QApplication.translate("MainWindow", "Export graph", None, QtGui.QApplication.UnicodeUTF8))
 

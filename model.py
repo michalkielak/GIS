@@ -31,3 +31,46 @@ class GraphModel(nx.Graph):
         for u, v, d in nx.minimum_spanning_edges(self, data=True):
             T.add_edge(u,v,d)
             yield T
+    
+    def serialize(self):
+        output = ""
+        for node_from in self.nodes(data=False):
+            for node_to in self.nodes(data=False):
+                if self.has_edge(node_from, node_to):
+                    output+= str(self.get_edge_data(node_from, node_to)['weight'])+" "
+                else:
+                    output+= "0 "
+            output+= "\n"
+        output+= "\n"
+        for node in self.nodesLocations:
+            output+= str(node[0]) + " " + str(node[1]) + " 0 \n"
+        return output
+    
+    def deserialize(self, input):
+        for line in input:
+            line = line.replace('  ', ' ')
+
+        coordinates = False
+        adjMatrix = []
+        self.nodesLocations = []
+        for line in input:
+            if not coordinates and line != '\n':
+                adjMatrix.append(map(float, line.strip().rstrip().split(' ')))
+            elif line =='\n':
+                coordinates = True
+            else:
+                self.nodesLocations.append(map(float, line.strip().rstrip().split(' ')))
+
+        #Check matrix validitiy
+        dimension = len(adjMatrix)
+        for row in adjMatrix:
+            if len(row) != dimension:
+                print "Error!!! Input matrix is invalid!"
+
+        self.clear()
+        self.next_id = dimension
+        for idx in range(dimension):
+            for idy in range(dimension):
+                if adjMatrix[idx][idy] != 0:
+                    self.add_edge(idx, idy, weight=adjMatrix[idx][idy])
+        

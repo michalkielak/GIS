@@ -8,6 +8,7 @@ class GraphicNode(QtGui.QGraphicsEllipseItem):
         self.x = x
         self.y = y
         super(GraphicNode, self).__init__(x - self.radius / 2, y - self.radius / 2, self.radius, self.radius)
-        
+        self.setBrush(QtGui.QColor(0,0,160,255))
+
     def scenePos(self):
         return QtCore.QPointF(self.x, self.y)
