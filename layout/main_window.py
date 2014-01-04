@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\GIS\layout\ui\main_window.ui'
 #
-# Created: Fri Jan 03 14:33:35 2014
+# Created: Fri Jan 03 17:52:56 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,8 +38,11 @@ class Ui_MainWindow(object):
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionKruskal = QtGui.QAction(MainWindow)
         self.actionKruskal.setObjectName("actionKruskal")
+        self.actionNext = QtGui.QAction(MainWindow)
+        self.actionNext.setObjectName("actionNext")
         self.menubar.addAction(self.menuFile.menuAction())
         self.toolBar.addAction(self.actionKruskal)
+        self.toolBar.addAction(self.actionNext)
         self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
@@ -51,4 +54,6 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionKruskal.setText(QtGui.QApplication.translate("MainWindow", "Kruskal", None, QtGui.QApplication.UnicodeUTF8))
         self.actionKruskal.setToolTip(QtGui.QApplication.translate("MainWindow", "Kruskall algorithm", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNext.setText(QtGui.QApplication.translate("MainWindow", "Next", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNext.setToolTip(QtGui.QApplication.translate("MainWindow", "Next step", None, QtGui.QApplication.UnicodeUTF8))
 

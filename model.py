@@ -18,6 +18,16 @@ class GraphModel(nx.Graph):
     def addEdge(self, id_from, id_to):
         weight = euclideanDistance(self.nodesLocations[id_from], self.nodesLocations[id_to])
         self.add_edge(id_from, id_to, weight=weight)
+        return weight
 
     def minTree(self):
         return nx.minimum_spanning_tree(self)
+    
+    def iterativeAlgorithm(self):
+        T = nx.Graph()
+        for n in T:
+            T.node[n]=self.node[n].copy()
+        T.graph=self.graph.copy()
+        for u, v, d in nx.minimum_spanning_edges(self, data=True):
+            T.add_edge(u,v,d)
+            yield T
