@@ -7,6 +7,7 @@ import time
 
 
 class View(QtGui.QMainWindow):
+
     def __init__(self, parent=None):
         super(View, self).__init__(parent)
         self.ui = Ui_MainWindow()
@@ -20,35 +21,156 @@ class View(QtGui.QMainWindow):
         self.originalMousePressEvent = self.scene.mousePressEvent
         self.originalMouseMoveEvent = self.scene.mouseMoveEvent
         self.originalMouseReleaseEvent = self.scene.mouseReleaseEvent
+        self.originalcontextMenuEvent = self.scene.contextMenuEvent
         self.scene.mousePressEvent = self.ownMousePressEvent
         self.scene.mouseReleaseEvent = self.ownMouseReleaseEvent
         self.scene.mouseMoveEvent = self.ownMouseMoveEvent
+        self.scene.contextMenuEvent = self.ownContextMenuEvent
         self.clickedNodeId = None
         self.currentEdge = None
         self.currentEdgeStart = None
+        self.clickedMoveNodeId = None
+        self.clickedMoveNode = None
+        self.lineWidth = 4
+        self.lineColor = QtGui.QColor("black")
+        self.nodeWidth = 24
+        self.nodeColor = QtGui.QColor("blue")
         self.minTreeEdges = []
         self.algorithmSteps = []
+        self.edgesStartList = None
+        self.currentNode = None
         self.ui.actionKruskal.triggered.connect(self.executeKruskalAlgorithm)
         self.ui.actionNext.triggered.connect(self.nextAlgorithmStep)
         self.ui.actionNext.setDisabled(True)
-        self.ui.actionOpen_from_file.triggered.connect(self.openFile)
+        self.ui.actionOpen_from_file.triggered.connect(self.openFileNodes)
+        self.ui.actionOpen_from_file_weight.triggered.connect(self.openFileWeight)
         self.ui.actionSave_graph.triggered.connect(self.saveGraph)
         self.ui.actionExport.triggered.connect(self.saveToFile)
-        
+
+    def ownContextMenuEvent(self, event):
+
+        menu = QtGui.QMenu()
+        ag = QtGui.QActionGroup(menu, exclusive=True)
+        delete = menu.addAction("Delete")
+        lineColorMenu = menu.addMenu("Line color")
+        lineWidthMenu = menu.addMenu("Line width")
+
+        greenColor = lineColorMenu.addAction("Green")
+        blueColor = lineColorMenu.addAction("Blue")
+        blackColor = lineColorMenu.addAction("Black")
+
+        WidthOne = ag.addAction(QtGui.QAction("1", menu, checkable=True))
+        lineWidthMenu.addAction(WidthOne)
+        WidthTwo = ag.addAction(QtGui.QAction("2", menu, checkable=True))
+        lineWidthMenu.addAction(WidthTwo)
+        WidthThree = ag.addAction(QtGui.QAction("3", menu, checkable=True))
+        lineWidthMenu.addAction(WidthThree)
+        WidthFour = ag.addAction(QtGui.QAction("4", menu, checkable=True))
+        lineWidthMenu.addAction(WidthFour)
+
+        nodeWidthMenu = menu.addMenu("Node diameter")
+        nodeColorMenu = menu.addMenu("Node color")
+
+
+        greenNodeColor = nodeColorMenu.addAction("Green")
+        blueNodeColor = nodeColorMenu.addAction("Blue")
+        blackNodeColor = nodeColorMenu.addAction("Black")
+        WidthNodeOne = ag.addAction(QtGui.QAction("24", menu, checkable=True))
+        nodeWidthMenu.addAction(WidthNodeOne)
+        WidthNodeTwo = ag.addAction(QtGui.QAction("20", menu, checkable=True))
+        nodeWidthMenu.addAction(WidthNodeTwo)
+        WidthNodeThree = ag.addAction(QtGui.QAction("16", menu, checkable=True))
+        nodeWidthMenu.addAction(WidthNodeThree)
+        WidthNodeFour = ag.addAction(QtGui.QAction("12", menu, checkable=True))
+        nodeWidthMenu.addAction(WidthNodeFour)
+
+
+        showLabels = menu.addAction(QtGui.QAction('Show labels', menu, checkable=True))
+
+        point = QtCore.QPoint(event.scenePos().x(), event.scenePos().y())
+        action = menu.exec_(self.mapToGlobal(point))
+        #if action == delete:
+            #self.deleteItem(event)
+
+        if action == greenColor:
+            self.linecolor = QtGui.QColor("green")
+        if action == blueColor:
+            self.linecolor = QtGui.QColor("blue")
+        if action == blackColor:
+            self.linecolor = QtGui.QColor("black")
+        if action == WidthOne:
+            self.lineWidth = 1
+        if action == WidthTwo:
+            self.lineWidth = 2
+        if action == WidthThree:
+            self.lineWidth = 3
+        if action == WidthFour:
+            self.lineWidth = 4
+        if action == greenNodeColor:
+            self.nodeColor = QtGui.QColor("green")
+        if action == blueNodeColor:
+            self.nodeColor = QtGui.QColor("blue")
+        if action == blackNodeColor:
+            self.nodeColor = QtGui.QColor("black")
+        if action == WidthNodeOne:
+            self.nodeWidth = 24
+        if action == WidthNodeTwo:
+            self.nodeWidth = 20
+        if action == WidthThree:
+            self.nodeWidth = 16
+        if action == WidthNodeFour:
+            self.nodeWidth = 12
+
+
+    def deleteItem(self, event):
+        item = self.scene.itemAt(event.scenePos())
+        if item and isinstance(self.scene.itemAt(event.scenePos()), GraphicNode):
+          deletedNode = self.scene.itemAt(event.scenePos())
+          self.graph.remove_node(deletedNode.id)
+          self.graph.nodesLocations.pop(deletedNode.id)
+          self.redraw()
+
+    def chageItemColor(self, item, color):
+        item
+
+
     def ownMousePressEvent(self, event):
-        if not self.scene.itemAt(event.scenePos()):
-            self.addNode(self.graph.nextId(), event.scenePos().x(), event.scenePos().y())
-        elif isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
-            self.originalMousePressEvent(event)
-        else:
-            clickedNode = self.scene.itemAt(event.scenePos())
-            self.clickedNodeId = clickedNode.id
-            self.currentEdgeStart = clickedNode.scenePos()
-            self.currentEdge = QtGui.QGraphicsLineItem(clickedNode.scenePos().x(), clickedNode.scenePos().y(), event.scenePos().x(), event.scenePos().y())
-            self.currentEdge.setZValue(-2)
-            pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0,0,0,255)), 4)
-            self.currentEdge.setPen(pen)
-            self.scene.addItem(self.currentEdge)
+        if event.button() is not QtCore.Qt.RightButton and event.button() is not QtCore.Qt.MiddleButton:
+            if not self.scene.itemAt(event.scenePos()):
+                self.addNode(self.graph.nextId(), event.scenePos().x(), event.scenePos().y())
+            elif isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
+                self.originalMousePressEvent(event)
+            else:
+                clickedNode = self.scene.itemAt(event.scenePos())
+                self.clickedNodeId = clickedNode.id
+                self.currentEdgeStart = clickedNode.scenePos()
+                self.currentEdge = QtGui.QGraphicsLineItem(clickedNode.scenePos().x(), clickedNode.scenePos().y(), event.scenePos().x(), event.scenePos().y())
+                self.currentEdge.setZValue(-2)
+                pen = QtGui.QPen(QtGui.QBrush(self.lineColor), self.lineWidth)
+                self.currentEdge.setPen(pen)
+                self.scene.addItem(self.currentEdge)
+        elif event.button() is QtCore.Qt.MiddleButton and event.button() is not QtCore.Qt.RightButton:
+            if self.scene.itemAt(event.scenePos()):
+                clickedMoveNode = self.scene.itemAt(event.scenePos())
+                self.clickedMoveNodeId = clickedMoveNode.id
+                neighborsList = []
+                neighborsList = self.graph.neighbors(self.clickedMoveNodeId)
+                self.edgesStartList = []
+                self.scene.removeItem(self.scene.itemAt(event.scenePos()))
+                self.currentNode = self.addNode(self.clickedMoveNodeId, event.scenePos().x(),  event.scenePos().y(), addToModel = False)
+                if neighborsList is not None:
+                    for i in neighborsList:
+                        middlex = (clickedMoveNode.x + self.graph.nodesLocations[self.clickedMoveNodeId][0])/2
+                        middley = (clickedMoveNode.y + self.graph.nodesLocations[self.clickedMoveNodeId][1])/2
+                        point = QtCore.QPoint(middlex, middley)
+                        self.edgesStartList.append(self.graph.nodesLocations[self.clickedMoveNodeId][0], self.graph.nodesLocations[self.clickedMoveNodeId][1])
+                        self.scene.removeItem(point)
+                if self.edgesStartList is not None:
+                    for k in self.edgesStartList:
+                        self.currentEdge = QtGui.QGraphicsLineItem(self.edgesStartList[k][0], self.edgesStartList[1], event.scenePos().x(), event.scenePos().y())
+                        pen = QtGui.QPen(QtGui.QBrush(self.lineColor), self.lineWidth)
+                        self.currentEdge.setPen(pen)
+                        self.scene.addItem(self.currentEdge)
 
     def ownMouseReleaseEvent(self, event):
         if self.scene.itemAt(event.scenePos()) and self.currentEdge and isinstance(self.scene.itemAt(event.scenePos()), GraphicNode):
@@ -66,14 +188,21 @@ class View(QtGui.QMainWindow):
             self.currentEdgeStart = None
 
     def ownMouseMoveEvent(self, event):
-        if isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
-            self.originalMouseMoveEvent(event)
-        elif self.currentEdge:
-            self.currentEdge.setLine(self.currentEdgeStart.x(), self.currentEdgeStart.y(), event.scenePos().x(), event.scenePos().y())
+        if event.button() is not QtCore.Qt.MiddleButton:
+            if isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
+                self.originalMouseMoveEvent(event)
+            elif self.currentEdge:
+                self.currentEdge.setLine(self.currentEdgeStart.x(), self.currentEdgeStart.y(), event.scenePos().x(), event.scenePos().y())
+        elif event.button() is QtCore.Qt.MiddleButton:
+            self.scene.removeItem(self.scene.itemAt(event.scenePos()))
+            self.addNode(self.clickedMoveNodeId, event.scenePos().x(),  event.scenePos().y(), addToModel = False)
+            if self.edgesStartList is not None:
+                for k in self.edgesStartList:
+                    self.currentEdge = QtGui.QGraphicsLineItem(self.edgesStartList[k][0], self.edgesStartList[1], event.scenePos().x(), event.scenePos().y())
 
     def addNode(self, node_id, x, y, addToModel = True):
         #Add node to view and model
-        node = GraphicNode(node_id, x, y)
+        node = GraphicNode(node_id, x, y, self.nodeColor, self.nodeWidth)
         self.scene.addItem(node)
         if addToModel:
             self.graph.add_node(node_id)
@@ -101,7 +230,7 @@ class View(QtGui.QMainWindow):
         for edge in graph.edges():
             edgeItem = QtGui.QGraphicsLineItem(self.graph.nodesLocations[edge[0]][0], self.graph.nodesLocations[edge[0]][1], self.graph.nodesLocations[edge[1]][0], self.graph.nodesLocations[edge[1]][1])
             edgeItem.setZValue(-1)
-            pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(255,0,0,255)), 4)
+            pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor("red")), self.lineWidth)
             edgeItem.setPen(pen)
             self.scene.addItem(edgeItem)
             self.minTreeEdges.append(edgeItem)
@@ -118,11 +247,18 @@ class View(QtGui.QMainWindow):
             if not self.algorithmSteps:
                 self.ui.actionNext.setDisabled(True)
 
-    def openFile(self):
+    def openFileNodes(self):
         filePath = QtGui.QFileDialog.getOpenFileName()[0]
         fp = open(filePath, 'r')
         inputGraph = fp.readlines()
-        self.graph.deserialize(inputGraph)
+        self.graph.deserialize_nodes(inputGraph)
+        self.redraw_nodes()
+
+    def openFileWeight(self):
+        filePath = QtGui.QFileDialog.getOpenFileName()[0]
+        fp = open(filePath, 'r')
+        inputGraph = fp.readlines()
+        self.graph.deserialize_weights(inputGraph, True)
         self.redraw()
         
     def saveGraph(self):
@@ -140,7 +276,11 @@ class View(QtGui.QMainWindow):
         fp = open(filePath, "w")
         fp.write(output)
         fp.close()
-        
+
+    def redraw_nodes(self):
+        for node in self.graph.nodes():
+            self.addNode(node, self.graph.nodesLocations[node][0], self.graph.nodesLocations[node][1], False)
+
     def redraw(self):
         for node in self.graph.nodes():
             self.addNode(node, self.graph.nodesLocations[node][0], self.graph.nodesLocations[node][1], False)

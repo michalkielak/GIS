@@ -46,31 +46,38 @@ class GraphModel(nx.Graph):
             output+= str(node[0]) + " " + str(node[1]) + " 0 \n"
         return output
     
-    def deserialize(self, input):
+    def deserialize_nodes(self, input):
         for line in input:
             line = line.replace('  ', ' ')
 
         coordinates = False
-        adjMatrix = []
+        dimension = len(input)
         self.nodesLocations = []
         for line in input:
             if not coordinates and line != '\n':
-                adjMatrix.append(map(float, line.strip().rstrip().split(' ')))
-            elif line =='\n':
-                coordinates = True
-            else:
                 self.nodesLocations.append(map(float, line.strip().rstrip().split(' ')))
-
-        #Check matrix validitiy
-        dimension = len(adjMatrix)
-        for row in adjMatrix:
-            if len(row) != dimension:
-                print "Error!!! Input matrix is invalid!"
-
         self.clear()
         self.next_id = dimension
         for idx in range(dimension):
-            for idy in range(dimension):
-                if adjMatrix[idx][idy] != 0:
-                    self.add_edge(idx, idy, weight=adjMatrix[idx][idy])
-        
+            self.add_node(idx)
+
+    def deserialize_weights(self, input, weight = False):
+        for line in input:
+            line = line.replace('  ', ' ')
+        adjMatrix = []
+
+        for line in input:
+            adjMatrix.append(map(float, line.strip().rstrip().split(' ')))
+
+        if weight is not False:
+            #Check matrix validitiy
+            dimension = len(adjMatrix)
+            for row in adjMatrix:
+                if len(row) != dimension:
+                    print "Error!!! Input matrix is invalid!"
+
+            self.next_id = dimension
+            for idx in range(dimension):
+                for idy in range(dimension):
+                    if adjMatrix[idx][idy] != 0:
+                        self.add_edge(idx, idy, weight=adjMatrix[idx][idy])
