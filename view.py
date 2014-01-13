@@ -1,7 +1,9 @@
 from PySide import QtGui, QtCore
 from layout.main_window import Ui_MainWindow
+from layout.weight_window import Ui_Form
 from graphicNode import GraphicNode
 from model import GraphModel
+from weightWindow import Form
 import networkx as nx
 import time
 
@@ -27,6 +29,7 @@ class View(QtGui.QMainWindow):
         self.scene.mouseMoveEvent = self.ownMouseMoveEvent
         self.scene.contextMenuEvent = self.ownContextMenuEvent
         self.clickedNodeId = None
+        self.weights = []
         self.currentEdge = None
         self.currentEdgeStart = None
         self.clickedMoveNodeId = None
@@ -39,88 +42,42 @@ class View(QtGui.QMainWindow):
         self.algorithmSteps = []
         self.edgesStartList = None
         self.currentNode = None
+        self.weightWindowVariable = None
         self.ui.actionKruskal.triggered.connect(self.executeKruskalAlgorithm)
         self.ui.actionNext.triggered.connect(self.nextAlgorithmStep)
         self.ui.actionNext.setDisabled(True)
         self.ui.actionOpen_from_file.triggered.connect(self.openFileNodes)
         self.ui.actionOpen_from_file_weight.triggered.connect(self.openFileWeight)
         self.ui.actionSave_graph.triggered.connect(self.saveGraph)
-        self.ui.actionExport.triggered.connect(self.saveToFile)
+        self.ui.actionExport.triggered.connect(self.actionExport)
+        self.ui.actionExport_weights.triggered.connect(self.actionExport_weights)
+        self.ui.nodeColorCb.currentIndexChanged['QString'].connect(self.setNodeColor)
+        self.ui.lineColorCb.currentIndexChanged['QString'].connect(self.setLineColor)
+        self.ui.lineWidthCb.currentIndexChanged['QString'].connect(self.setLineWidth)
+        self.ui.nodeWidthCb.currentIndexChanged['QString'].connect(self.setNodeWidth)
+
+    def setLineColor(self):
+        self.linecolor = QtGui.QColor(str(self.ui.lineColorCb.currentText()))
+
+    def setLineWidth(self):
+        self.lineWidth = int(self.ui.lineWidthCb.currentText())
+
+    def setNodeColor(self):
+        self.nodeColor = QtGui.QColor(str(self.ui.nodeColorCb.currentText()))
+
+    def setNodeWidth(self):
+        self.nodeWidth = int(self.ui.nodeWidthCb.currentText())
 
     def ownContextMenuEvent(self, event):
 
         menu = QtGui.QMenu()
         ag = QtGui.QActionGroup(menu, exclusive=True)
         delete = menu.addAction("Delete")
-        lineColorMenu = menu.addMenu("Line color")
-        lineWidthMenu = menu.addMenu("Line width")
-
-        greenColor = lineColorMenu.addAction("Green")
-        blueColor = lineColorMenu.addAction("Blue")
-        blackColor = lineColorMenu.addAction("Black")
-
-        WidthOne = ag.addAction(QtGui.QAction("1", menu, checkable=True))
-        lineWidthMenu.addAction(WidthOne)
-        WidthTwo = ag.addAction(QtGui.QAction("2", menu, checkable=True))
-        lineWidthMenu.addAction(WidthTwo)
-        WidthThree = ag.addAction(QtGui.QAction("3", menu, checkable=True))
-        lineWidthMenu.addAction(WidthThree)
-        WidthFour = ag.addAction(QtGui.QAction("4", menu, checkable=True))
-        lineWidthMenu.addAction(WidthFour)
-
-        nodeWidthMenu = menu.addMenu("Node diameter")
-        nodeColorMenu = menu.addMenu("Node color")
-
-
-        greenNodeColor = nodeColorMenu.addAction("Green")
-        blueNodeColor = nodeColorMenu.addAction("Blue")
-        blackNodeColor = nodeColorMenu.addAction("Black")
-        WidthNodeOne = ag.addAction(QtGui.QAction("24", menu, checkable=True))
-        nodeWidthMenu.addAction(WidthNodeOne)
-        WidthNodeTwo = ag.addAction(QtGui.QAction("20", menu, checkable=True))
-        nodeWidthMenu.addAction(WidthNodeTwo)
-        WidthNodeThree = ag.addAction(QtGui.QAction("16", menu, checkable=True))
-        nodeWidthMenu.addAction(WidthNodeThree)
-        WidthNodeFour = ag.addAction(QtGui.QAction("12", menu, checkable=True))
-        nodeWidthMenu.addAction(WidthNodeFour)
-
-
-        showLabels = menu.addAction(QtGui.QAction('Show labels', menu, checkable=True))
 
         point = QtCore.QPoint(event.scenePos().x(), event.scenePos().y())
         action = menu.exec_(self.mapToGlobal(point))
         #if action == delete:
             #self.deleteItem(event)
-
-        if action == greenColor:
-            self.linecolor = QtGui.QColor("green")
-        if action == blueColor:
-            self.linecolor = QtGui.QColor("blue")
-        if action == blackColor:
-            self.linecolor = QtGui.QColor("black")
-        if action == WidthOne:
-            self.lineWidth = 1
-        if action == WidthTwo:
-            self.lineWidth = 2
-        if action == WidthThree:
-            self.lineWidth = 3
-        if action == WidthFour:
-            self.lineWidth = 4
-        if action == greenNodeColor:
-            self.nodeColor = QtGui.QColor("green")
-        if action == blueNodeColor:
-            self.nodeColor = QtGui.QColor("blue")
-        if action == blackNodeColor:
-            self.nodeColor = QtGui.QColor("black")
-        if action == WidthNodeOne:
-            self.nodeWidth = 24
-        if action == WidthNodeTwo:
-            self.nodeWidth = 20
-        if action == WidthThree:
-            self.nodeWidth = 16
-        if action == WidthNodeFour:
-            self.nodeWidth = 12
-
 
     def deleteItem(self, event):
         item = self.scene.itemAt(event.scenePos())
@@ -194,8 +151,8 @@ class View(QtGui.QMainWindow):
             elif self.currentEdge:
                 self.currentEdge.setLine(self.currentEdgeStart.x(), self.currentEdgeStart.y(), event.scenePos().x(), event.scenePos().y())
         elif event.button() is QtCore.Qt.MiddleButton:
-            self.scene.removeItem(self.scene.itemAt(event.scenePos()))
-            self.addNode(self.clickedMoveNodeId, event.scenePos().x(),  event.scenePos().y(), addToModel = False)
+            if isinstance(self.scene.itemAt(event.scenePos()), GraphicNode):
+                self.originalMouseMoveEvent(event)
             if self.edgesStartList is not None:
                 for k in self.edgesStartList:
                     self.currentEdge = QtGui.QGraphicsLineItem(self.edgesStartList[k][0], self.edgesStartList[1], event.scenePos().x(), event.scenePos().y())
@@ -203,6 +160,7 @@ class View(QtGui.QMainWindow):
     def addNode(self, node_id, x, y, addToModel = True):
         #Add node to view and model
         node = GraphicNode(node_id, x, y, self.nodeColor, self.nodeWidth)
+        node.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.scene.addItem(node)
         if addToModel:
             self.graph.add_node(node_id)
@@ -229,17 +187,59 @@ class View(QtGui.QMainWindow):
         self.minTreeEdges = []
         for edge in graph.edges():
             edgeItem = QtGui.QGraphicsLineItem(self.graph.nodesLocations[edge[0]][0], self.graph.nodesLocations[edge[0]][1], self.graph.nodesLocations[edge[1]][0], self.graph.nodesLocations[edge[1]][1])
+            for j in range(len(self.weights)):
+                if self.weights[j][0] == str(self.graph.get_edge_data(edge[0], edge[1])['weight']):
+                    self.weights[j][1] = 1
             edgeItem.setZValue(-1)
             pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor("red")), self.lineWidth)
             edgeItem.setPen(pen)
             self.scene.addItem(edgeItem)
             self.minTreeEdges.append(edgeItem)
+        self.printWeights()
 
     def executeKruskalAlgorithm(self):
         self.algorithmSteps = []
+        self.weightWindowVariable = Form()
+        self.weightWindowVariable.show()
+        self.sortByWeight()
         for step in self.graph.iterativeAlgorithm():
             self.algorithmSteps.append(step.copy())
+
         self.ui.actionNext.setEnabled(True)
+
+    def sortByWeight(self):
+        weight = 0
+        weights = []
+        edgesList = []
+        for node_from in self.graph.nodes(data=False):
+            for node_to in self.graph.nodes(data=False):
+                if self.graph.has_edge(node_from, node_to):
+                    (weights.append(str(self.graph.get_edge_data(node_from, node_to)['weight'])))
+        for i in range(len(weights)):
+            j=len(weights)-1
+            while j>i:
+                 if weights[j]<weights[j-1]:
+                    tmp=weights[j]
+                    weights[j]=weights[j-1]
+                    weights[j-1]=tmp
+                 j-=1
+        self.weights = [[0 for x in xrange(2)] for x in xrange(i+1)]
+        for i in range(len(weights)):
+            self.weights[i][0] = weights[i]
+            self.weights[i][1] = 0
+
+    def printWeights(self):
+        html = ""
+        for i in range(len(self.weights)):
+            if self.weights[i][1] == 1:
+               html+="<font color='red'>"+str(self.weights[i][0]) + "</font> "
+            elif self.weights[i][1] == 0:
+               html+= str(self.weights[i][0])
+        html+="<BR>"
+        self.weightWindowVariable.plainTextEdit.appendHtml(html)
+
+
+
 
     def nextAlgorithmStep(self):
         if self.algorithmSteps:
@@ -270,8 +270,15 @@ class View(QtGui.QMainWindow):
         image.save(filePath)
         painter.end()
         
-    def saveToFile(self):
-        output = self.graph.serialize()
+    def actionExport_weights(self):
+        output = self.graph.serialize_edges()
+        filePath = QtGui.QFileDialog.getSaveFileName()[0]
+        fp = open(filePath, "w")
+        fp.write(output)
+        fp.close()
+
+    def actionExport(self):
+        output = self.graph.serialize_nodes()
         filePath = QtGui.QFileDialog.getSaveFileName()[0]
         fp = open(filePath, "w")
         fp.write(output)

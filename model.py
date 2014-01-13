@@ -32,7 +32,13 @@ class GraphModel(nx.Graph):
             T.add_edge(u,v,d)
             yield T
     
-    def serialize(self):
+    def serialize_nodes(self):
+        output = ""
+        for node in self.nodesLocations:
+            output+= str(node[0]) + " " + str(node[1]) + " 0 \n"
+        return output
+
+    def serialize_edges(self):
         output = ""
         for node_from in self.nodes(data=False):
             for node_to in self.nodes(data=False):
@@ -42,9 +48,6 @@ class GraphModel(nx.Graph):
                     output+= "0 "
             output+= "\n"
         output+= "\n"
-        for node in self.nodesLocations:
-            output+= str(node[0]) + " " + str(node[1]) + " 0 \n"
-        return output
     
     def deserialize_nodes(self, input):
         for line in input:
