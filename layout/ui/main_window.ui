@@ -24,7 +24,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>GroupBox</string>
+       <string/>
       </property>
       <widget class="QComboBox" name="lineColorCb">
        <property name="geometry">
@@ -221,7 +221,7 @@
       <widget class="QGraphicsView" name="graphicsView">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>-10</x>
          <y>30</y>
          <width>827</width>
          <height>626</height>
@@ -268,10 +268,13 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="actionKruskal"/>
    <addaction name="actionNext"/>
+   <addaction name="separator"/>
+   <addaction name="actionPRIMA"/>
+   <addaction name="actionNext_Prima"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionKruskal">
@@ -318,6 +321,16 @@
   <action name="actionExport_weights">
    <property name="text">
     <string>Export weights</string>
+   </property>
+  </action>
+  <action name="actionPRIMA">
+   <property name="text">
+    <string>PRIMA</string>
+   </property>
+  </action>
+  <action name="actionNext_Prima">
+   <property name="text">
+    <string>Next Prima</string>
    </property>
   </action>
  </widget>

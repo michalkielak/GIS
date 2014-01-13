@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Jan 13 21:03:20 2014
+# Created: Mon Jan 13 23:39:32 2014
 #      by: pyside-uic 0.2.14 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox = QtGui.QGroupBox(self.centralwidget)
+        self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.lineColorCb = QtGui.QComboBox(self.groupBox)
         self.lineColorCb.setGeometry(QtCore.QRect(150, 0, 78, 24))
@@ -69,7 +70,7 @@ class Ui_MainWindow(object):
         self.label_4.setGeometry(QtCore.QRect(390, 0, 71, 16))
         self.label_4.setObjectName("label_4")
         self.graphicsView = QtGui.QGraphicsView(self.groupBox)
-        self.graphicsView.setGeometry(QtCore.QRect(0, 30, 827, 626))
+        self.graphicsView.setGeometry(QtCore.QRect(-10, 30, 827, 626))
         self.graphicsView.setObjectName("graphicsView")
         self.verticalLayout_2.addWidget(self.groupBox)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -83,6 +84,7 @@ class Ui_MainWindow(object):
         self.toolBar.setMinimumSize(QtCore.QSize(0, 30))
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        MainWindow.insertToolBarBreak(self.toolBar)
         self.actionKruskal = QtGui.QAction(MainWindow)
         self.actionKruskal.setObjectName("actionKruskal")
         self.actionNext = QtGui.QAction(MainWindow)
@@ -99,6 +101,10 @@ class Ui_MainWindow(object):
         self.actionOpen_from_file_weight.setObjectName("actionOpen_from_file_weight")
         self.actionExport_weights = QtGui.QAction(MainWindow)
         self.actionExport_weights.setObjectName("actionExport_weights")
+        self.actionPRIMA = QtGui.QAction(MainWindow)
+        self.actionPRIMA.setObjectName("actionPRIMA")
+        self.actionNext_Prima = QtGui.QAction(MainWindow)
+        self.actionNext_Prima.setObjectName("actionNext_Prima")
         self.menuFile.addAction(self.actionExport)
         self.menuFile.addAction(self.actionExport_weights)
         self.menuFile.addAction(self.actionOpen_from_file)
@@ -109,6 +115,9 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionKruskal)
         self.toolBar.addAction(self.actionNext)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionPRIMA)
+        self.toolBar.addAction(self.actionNext_Prima)
+        self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
@@ -116,7 +125,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "GroupBox", None, QtGui.QApplication.UnicodeUTF8))
         self.lineColorCb.setItemText(0, QtGui.QApplication.translate("MainWindow", "blue", None, QtGui.QApplication.UnicodeUTF8))
         self.lineColorCb.setItemText(1, QtGui.QApplication.translate("MainWindow", "grey", None, QtGui.QApplication.UnicodeUTF8))
         self.lineColorCb.setItemText(2, QtGui.QApplication.translate("MainWindow", "black", None, QtGui.QApplication.UnicodeUTF8))
@@ -153,4 +161,6 @@ class Ui_MainWindow(object):
         self.actionExport.setText(QtGui.QApplication.translate("MainWindow", "Export nodes", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_from_file_weight.setText(QtGui.QApplication.translate("MainWindow", "Import weights", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExport_weights.setText(QtGui.QApplication.translate("MainWindow", "Export weights", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPRIMA.setText(QtGui.QApplication.translate("MainWindow", "PRIMA", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNext_Prima.setText(QtGui.QApplication.translate("MainWindow", "Next Prima", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -31,6 +31,15 @@ class GraphModel(nx.Graph):
         for u, v, d in nx.minimum_spanning_edges(self, data=True):
             T.add_edge(u,v,d)
             yield T
+
+    def iterativeAlgorithmPrima(self):
+        T = nx.Graph()
+        for n in T:
+            T.node[n]=self.node[n].copy()
+        T.graph=self.graph.copy()
+        for u, v, d in nx.prim_mst_edges(self, data=True):
+            T.add_edge(u,v,d)
+            yield T
     
     def serialize_nodes(self):
         output = ""

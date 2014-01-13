@@ -50,6 +50,8 @@ class View(QtGui.QMainWindow):
         self.ui.actionOpen_from_file_weight.triggered.connect(self.openFileWeight)
         self.ui.actionSave_graph.triggered.connect(self.saveGraph)
         self.ui.actionExport.triggered.connect(self.actionExport)
+        self.ui.actionPRIMA.triggered.connect(self.executePrimaAlgorithm)
+        self.ui.actionNext_Prima.triggered.connect(self.nextAlgorithmStep)
         self.ui.actionExport_weights.triggered.connect(self.actionExport_weights)
         self.ui.nodeColorCb.currentIndexChanged['QString'].connect(self.setNodeColor)
         self.ui.lineColorCb.currentIndexChanged['QString'].connect(self.setLineColor)
@@ -92,12 +94,12 @@ class View(QtGui.QMainWindow):
 
 
     def ownMousePressEvent(self, event):
-        if event.button() is not QtCore.Qt.RightButton and event.button() is not QtCore.Qt.MiddleButton:
+        if event.button() is not QtCore.Qt.RightButton:
             if not self.scene.itemAt(event.scenePos()):
                 self.addNode(self.graph.nextId(), event.scenePos().x(), event.scenePos().y())
             elif isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
                 self.originalMousePressEvent(event)
-            else:
+            elif event.button() is not QtCore.Qt.MiddleButton:
                 clickedNode = self.scene.itemAt(event.scenePos())
                 self.clickedNodeId = clickedNode.id
                 self.currentEdgeStart = clickedNode.scenePos()
@@ -146,7 +148,7 @@ class View(QtGui.QMainWindow):
 
     def ownMouseMoveEvent(self, event):
         if event.button() is not QtCore.Qt.MiddleButton:
-            if isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem):
+            if isinstance(self.scene.itemAt(event.scenePos()), QtGui.QGraphicsSimpleTextItem) or isinstance(self.scene.itemAt(event.scenePos()), GraphicNode):
                 self.originalMouseMoveEvent(event)
             elif self.currentEdge:
                 self.currentEdge.setLine(self.currentEdgeStart.x(), self.currentEdgeStart.y(), event.scenePos().x(), event.scenePos().y())
@@ -206,6 +208,20 @@ class View(QtGui.QMainWindow):
             self.algorithmSteps.append(step.copy())
 
         self.ui.actionNext.setEnabled(True)
+        self.ui.actionPRIMA.setEnabled(False)
+        self.ui.actionNext_Prima.setEnabled(False)
+
+    def executePrimaAlgorithm(self):
+        self.algorithmSteps = []
+        self.weightWindowVariable = Form()
+        self.weightWindowVariable.show()
+        self.sortByWeight()
+        for step in self.graph.iterativeAlgorithmPrima():
+            self.algorithmSteps.append(step.copy())
+
+        self.ui.actionNext_Prima.setEnabled(True)
+        self.ui.actionNext.setEnabled(False)
+        self.ui.actionKruskal.setEnabled(False)
 
     def sortByWeight(self):
         weight = 0
