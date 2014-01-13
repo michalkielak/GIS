@@ -215,6 +215,11 @@ class View(QtGui.QMainWindow):
             for node_to in self.graph.nodes(data=False):
                 if self.graph.has_edge(node_from, node_to):
                     (weights.append(str(self.graph.get_edge_data(node_from, node_to)['weight'])))
+        for a in range(len(weights)):
+             if weights.count(weights[a])>1:
+                weights[a]=None
+        for a in range(weights.count(None)):
+              weights.remove(None)
         for i in range(len(weights)):
             j=len(weights)-1
             while j>i:
