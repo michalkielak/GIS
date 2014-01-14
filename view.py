@@ -57,9 +57,12 @@ class View(QtGui.QMainWindow):
         self.ui.lineColorCb.currentIndexChanged['QString'].connect(self.setLineColor)
         self.ui.lineWidthCb.currentIndexChanged['QString'].connect(self.setLineWidth)
         self.ui.nodeWidthCb.currentIndexChanged['QString'].connect(self.setNodeWidth)
+        self.ui.actionNext_Prima.setEnabled(False)
+        self.lineColor = QtGui.QColor(QtGui.QColor("blue"))
+        self.lineWidth = 1
 
     def setLineColor(self):
-        self.linecolor = QtGui.QColor(str(self.ui.lineColorCb.currentText()))
+        self.lineColor = QtGui.QColor(str(self.ui.lineColorCb.currentText()))
 
     def setLineWidth(self):
         self.lineWidth = int(self.ui.lineWidthCb.currentText())
@@ -193,7 +196,7 @@ class View(QtGui.QMainWindow):
                 if self.weights[j][0] == str(self.graph.get_edge_data(edge[0], edge[1])['weight']):
                     self.weights[j][1] = 1
             edgeItem.setZValue(-1)
-            pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor("red")), self.lineWidth)
+            pen = QtGui.QPen(QtGui.QBrush(QtGui.QColor("red")), 5)
             edgeItem.setPen(pen)
             self.scene.addItem(edgeItem)
             self.minTreeEdges.append(edgeItem)

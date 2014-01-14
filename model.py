@@ -56,7 +56,7 @@ class GraphModel(nx.Graph):
                 else:
                     output+= "0 "
             output+= "\n"
-        output+= "\n"
+        return output
     
     def deserialize_nodes(self, input):
         for line in input:
