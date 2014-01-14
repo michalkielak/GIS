@@ -7,6 +7,3 @@ class Form(QDialog, Ui_Form):
     def __init__(self, parent = None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
-
-    def dupa(self):
-          self.weightWindowVariable.plainTextEdit.appendHtml("Dupa")
