@@ -1,11 +1,8 @@
 from PySide import QtGui, QtCore
 from layout.main_window import Ui_MainWindow
-from layout.weight_window import Ui_Form
 from graphicNode import GraphicNode
 from model import GraphModel
 from weightWindow import Form
-import networkx as nx
-import time
 
 
 class View(QtGui.QMainWindow):
@@ -200,7 +197,8 @@ class View(QtGui.QMainWindow):
             edgeItem.setPen(pen)
             self.scene.addItem(edgeItem)
             self.minTreeEdges.append(edgeItem)
-        self.printWeights()
+        if self.ui.actionNext_Prima.isEnabled() == False:
+            self.printWeights()
 
     def executeKruskalAlgorithm(self):
         self.algorithmSteps = []
@@ -217,7 +215,6 @@ class View(QtGui.QMainWindow):
     def executePrimaAlgorithm(self):
         self.algorithmSteps = []
         self.weightWindowVariable = Form()
-        self.weightWindowVariable.show()
         self.sortByWeight()
         for step in self.graph.iterativeAlgorithmPrima():
             self.algorithmSteps.append(step.copy())
@@ -270,6 +267,7 @@ class View(QtGui.QMainWindow):
             self.addGraph(self.algorithmSteps.pop(0))
             if not self.algorithmSteps:
                 self.ui.actionNext.setDisabled(True)
+                self.ui.actionNext_Prima.setDisabled(True)
 
     def openFileNodes(self):
         filePath = QtGui.QFileDialog.getOpenFileName()[0]

@@ -1,4 +1,3 @@
-from PyQt4 import QtGui
 from PySide.QtGui import QDialog
 from layout.weight_window import Ui_Form
 
