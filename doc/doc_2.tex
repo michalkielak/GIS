@@ -45,7 +45,7 @@
 \horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
 \huge SK2. Wizualizacja algorytmów grafowych II \\ % The assignment title
 \horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
-\LARGE Dokumentacja wstępna
+\LARGE Dokumentacja końcowa
 }%
 
 
@@ -146,5 +146,80 @@ Możliwe sytuacje wyjątkowe:
 \item ustawianie wielkości punktów
 \item zapisywanie, jako pliki graficzne, kolejnych kroków tworzenia drzewa
 \end{itemize}
+
+\section{Program - sposób obsługi}
+
+\subsection{Okno główne}
+
+Po uruchomieniu programu, pojawia się główne okno, które pokazano poniżej. Składowe okna głównego:
+\begin{itemize}
+\item[1] Menu (File)
+\item[2] Pasek funkcji
+\item[3] Plansza do rysowania i przetwarzania grafu
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=12cm]{main_window.png}
+
+\end{center}
+\subsection{Menu główne}
+
+Menu składa się z poniższych funkcji:
+\begin{itemize}
+\item Export nodes - zapisuje współrzędne dodanych punktów do pliku
+\item Export weights - zapisuje krawędzie i wagi do pliku
+\item Import nodes - wczytuje współrzędne punktów z pliku
+\item Import weights - wczytuje krawędzie i wagi z pliku
+\item Save to image file - zapisuje obraz widoczny w oknie rysowania do pliku graficznego
+\end{itemize}
+
+Uwaga! Wczytywanie zapisanego grafu powinno odbywać się w poniższej w kolejności:
+\begin{itemize}
+\item punkty
+\item krawędzie i wagi
+\end{itemize}
+
+\subsection{Rysowanie grafu}
+Do planszy można dodać dwa rodzaje obiektów:
+\begin{itemize}
+\item punkty
+\item krawędzie pomiędzy punktami
+\end{itemize}
+
+Punkty dodaje się przez kliknięcie lewym przyciskiem myszy w dowolnym miejscu planszy. W wyniku kliknięcia pojawi się punkt.
+Łączenie punktów krawędziami odbywa się w następujący sposób:
+\begin{itemize}
+\item kliknięcie w wybrany punkt początkowy
+\item przytrzymanie przycisku
+\item przeciągnięcie kursora myszy nad punkt końcowy, z którym ma być połączony punkt początkowy
+\item puszczenie klawisza myszy
+\end{itemize}
+
+W wyniku wykonania powyższych operacji, pomiędzy punktami pojawi się krawędź z etykietą wagi. Podana waga odpowiada długości odcinka.
+
+Przed narysowaniem obiektu, możliwa jest zmiana jego właściwości (za pomocą list rozwijanych na górze ekranu).
+Dla linii są to:
+\begin{itemize}
+\item grubość linii (line width)
+\item kolor linii (line color)
+\end{itemize}
+
+Dla punktu są to:
+\begin{itemize}
+\item średnica punktu (node width)
+\item kolor punktu (node color)
+\end{itemize}
+
+\subsection{Wykonanie algorytmu}
+
+Po narysowaniu grafu, możliwe jest wybranie jednego z dwóch algorytmów znalezienia minimalnego drzewa rozpinającego:
+\begin{itemize}
+\item Algorytm Kruskala
+\item Algorytm PRIMA
+\end{itemize}
+
+Wyboru dokonuje się przez wciśnięcie wybranego przycisku u góry ekranu (odpowiednio "Kruskal" lub "Prima"). Następnie można obejrzeć kolejne kroki wykonania wybranego algorytmu, przez wciskanie przycisku "Next". Po zakończeniu wykonania algorytmu przycisk ulega dezaktywacji.
+
+Podczas wykonywania algorytmu Kruskala dostępne jest okno, w którym widać posortowane wagi krawędzi. Wybierane w kolejnych krokach krawędzie są zaznaczane kolorem czerwonym.
 
 \end{document}
