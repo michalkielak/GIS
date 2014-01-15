@@ -3,6 +3,7 @@ from layout.main_window import Ui_MainWindow
 from graphicNode import GraphicNode
 from model import GraphModel
 from weightWindow import Form
+import networkx as nx
 
 
 class View(QtGui.QMainWindow):
@@ -48,7 +49,6 @@ class View(QtGui.QMainWindow):
         self.ui.actionSave_graph.triggered.connect(self.saveGraph)
         self.ui.actionExport.triggered.connect(self.actionExport)
         self.ui.actionPRIMA.triggered.connect(self.executePrimaAlgorithm)
-        self.ui.actionNext_Prima.triggered.connect(self.nextAlgorithmStep)
         self.ui.actionExport_weights.triggered.connect(self.actionExport_weights)
         self.ui.nodeColorCb.currentIndexChanged['QString'].connect(self.setNodeColor)
         self.ui.lineColorCb.currentIndexChanged['QString'].connect(self.setLineColor)
@@ -197,8 +197,6 @@ class View(QtGui.QMainWindow):
             edgeItem.setPen(pen)
             self.scene.addItem(edgeItem)
             self.minTreeEdges.append(edgeItem)
-        if self.ui.actionNext_Prima.isEnabled() == False:
-            self.printWeights()
 
     def executeKruskalAlgorithm(self):
         self.algorithmSteps = []
@@ -210,7 +208,7 @@ class View(QtGui.QMainWindow):
 
         self.ui.actionNext.setEnabled(True)
         self.ui.actionPRIMA.setEnabled(False)
-        self.ui.actionNext_Prima.setEnabled(False)
+        self.ui.actionKruskal.setEnabled(False)
 
     def executePrimaAlgorithm(self):
         self.algorithmSteps = []
@@ -219,44 +217,44 @@ class View(QtGui.QMainWindow):
         for step in self.graph.iterativeAlgorithmPrima():
             self.algorithmSteps.append(step.copy())
 
-        self.ui.actionNext_Prima.setEnabled(True)
-        self.ui.actionNext.setEnabled(False)
+        self.ui.actionNext.setEnabled(True)
+        self.ui.actionPRIMA.setEnabled(False)
         self.ui.actionKruskal.setEnabled(False)
 
+
     def sortByWeight(self):
-        weight = 0
-        weights = []
-        edgesList = []
-        for node_from in self.graph.nodes(data=False):
-            for node_to in self.graph.nodes(data=False):
-                if self.graph.has_edge(node_from, node_to):
-                    (weights.append(str(self.graph.get_edge_data(node_from, node_to)['weight'])))
-        for a in range(len(weights)):
-             if weights.count(weights[a])>1:
-                weights[a]=None
-        for a in range(weights.count(None)):
-              weights.remove(None)
-        for i in range(len(weights)):
-            j=len(weights)-1
-            while j>i:
-                 if weights[j]<weights[j-1]:
-                    tmp=weights[j]
-                    weights[j]=weights[j-1]
-                    weights[j-1]=tmp
-                 j-=1
-        self.weights = [[0 for x in xrange(2)] for x in xrange(i+1)]
-        for i in range(len(weights)):
-            self.weights[i][0] = weights[i]
-            self.weights[i][1] = 0
+        edges = sorted(self.graph.edges(data=True),key=lambda t: t[2].get('weight',1))
+        self.edges = []
+        
+        for edge in edges:
+            self.edges.append({'weight': edge[2]['weight'], 'edge': edge, 'inGraph': False, 'createCycle':False})
 
     def printWeights(self):
         html = ""
-        for i in range(len(self.weights)):
-            if self.weights[i][1] == 1:
-               html+="<font color='red'>"+str(self.weights[i][0]) + "</font> "
-            elif self.weights[i][1] == 0:
-               html+= str(self.weights[i][0])
-        html+="<BR>"
+        currentGraph = self.algorithmSteps[0]
+        graphEdges = len(currentGraph.edges())
+        for edge in self.edges:
+            if currentGraph.has_edge(edge['edge'][0], edge['edge'][1]):
+                html += str(edge['weight']) + "<br>"
+#                edge['inGraph'] = True
+            else:
+                currentGraph.add_edge(edge['edge'][0], edge['edge'][1])
+                print sum(1 for x in nx.simple_cycles(currentGraph.to_directed()))
+                if sum(1 for x in nx.simple_cycles(currentGraph.to_directed()))!=graphEdges+1:
+                    html+="<font color='red'>"+str(edge['weight']) + "</font><br>"
+#                    edge['createCycle'] = True
+                else:
+                    html+="<font color='green'>"+str(edge['weight']) + "</font><br>"
+                currentGraph.remove_edge(edge['edge'][0], edge['edge'][1])
+
+#        html = ""
+#        for i in range(len(self.weights)):
+#            if self.weights[i][1] == 1:
+#               html+="<font color='red'>"+str(self.weights[i][0]) + "</font> "
+#            elif self.weights[i][1] == 0:
+#               html+= str(self.weights[i][0])
+#        html+="<BR>"
+        self.weightWindowVariable.plainTextEdit.clear()
         self.weightWindowVariable.plainTextEdit.appendHtml(html)
 
 
@@ -264,10 +262,14 @@ class View(QtGui.QMainWindow):
 
     def nextAlgorithmStep(self):
         if self.algorithmSteps:
+            if self.ui.actionNext_Prima.isEnabled() == False:
+                self.printWeights()
             self.addGraph(self.algorithmSteps.pop(0))
             if not self.algorithmSteps:
                 self.ui.actionNext.setDisabled(True)
-                self.ui.actionNext_Prima.setDisabled(True)
+                self.ui.actionPRIMA.setEnabled(True)
+                self.ui.actionKruskal.setEnabled(True)
+
 
     def openFileNodes(self):
         filePath = QtGui.QFileDialog.getOpenFileName()[0]
