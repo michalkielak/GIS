@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\GIS\layout\ui\main_window.ui'
 #
-# Created: Wed Jan 15 21:38:45 2014
+# Created: Wed Jan 22 23:04:42 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 0, 6, 1, 1)
         self.nodeWidthCb = QtGui.QComboBox(self.groupBox)
+        self.nodeWidthCb.setInsertPolicy(QtGui.QComboBox.InsertAtBottom)
         self.nodeWidthCb.setObjectName("nodeWidthCb")
         self.nodeWidthCb.addItem("")
         self.nodeWidthCb.addItem("")
@@ -78,7 +79,21 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.nodeWidthCb, 0, 7, 1, 1)
         self.graphicsView = QtGui.QGraphicsView(self.groupBox)
         self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout.addWidget(self.graphicsView, 1, 0, 1, 8)
+        self.gridLayout.addWidget(self.graphicsView, 1, 0, 1, 10)
+        self.label_5 = QtGui.QLabel(self.groupBox)
+        self.label_5.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout.addWidget(self.label_5, 0, 8, 1, 1)
+        self.labelSizeCb = QtGui.QComboBox(self.groupBox)
+        self.labelSizeCb.setObjectName("labelSizeCb")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.labelSizeCb.addItem("")
+        self.gridLayout.addWidget(self.labelSizeCb, 0, 9, 1, 1)
         self.verticalLayout_2.addWidget(self.groupBox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -125,6 +140,7 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
+        self.nodeWidthCb.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -154,6 +170,14 @@ class Ui_MainWindow(object):
         self.nodeWidthCb.setItemText(4, QtGui.QApplication.translate("MainWindow", "16", None, QtGui.QApplication.UnicodeUTF8))
         self.nodeWidthCb.setItemText(5, QtGui.QApplication.translate("MainWindow", "14", None, QtGui.QApplication.UnicodeUTF8))
         self.nodeWidthCb.setItemText(6, QtGui.QApplication.translate("MainWindow", "12", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Label size", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(0, QtGui.QApplication.translate("MainWindow", "8", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(1, QtGui.QApplication.translate("MainWindow", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(2, QtGui.QApplication.translate("MainWindow", "12", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(3, QtGui.QApplication.translate("MainWindow", "14", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(4, QtGui.QApplication.translate("MainWindow", "16", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(5, QtGui.QApplication.translate("MainWindow", "18", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSizeCb.setItemText(6, QtGui.QApplication.translate("MainWindow", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionKruskal.setText(QtGui.QApplication.translate("MainWindow", "Kruskal", None, QtGui.QApplication.UnicodeUTF8))

@@ -54,21 +54,31 @@ class View(QtGui.QMainWindow):
         self.ui.lineColorCb.currentIndexChanged['QString'].connect(self.setLineColor)
         self.ui.lineWidthCb.currentIndexChanged['QString'].connect(self.setLineWidth)
         self.ui.nodeWidthCb.currentIndexChanged['QString'].connect(self.setNodeWidth)
+        self.ui.labelSizeCb.currentIndexChanged['QString'].connect(self.setLabelSize)
         self.ui.actionNext_Prima.setEnabled(False)
         self.lineColor = QtGui.QColor(QtGui.QColor("blue"))
         self.lineWidth = 1
+        self.labelSize = 8
 
     def setLineColor(self):
         self.lineColor = QtGui.QColor(str(self.ui.lineColorCb.currentText()))
+        self.refreshScene()
 
     def setLineWidth(self):
         self.lineWidth = int(self.ui.lineWidthCb.currentText())
+        self.refreshScene()
 
     def setNodeColor(self):
         self.nodeColor = QtGui.QColor(str(self.ui.nodeColorCb.currentText()))
+        self.refreshScene()
 
     def setNodeWidth(self):
         self.nodeWidth = int(self.ui.nodeWidthCb.currentText())
+        self.refreshScene()
+        
+    def setLabelSize(self):
+        self.labelSize = int(self.ui.labelSizeCb.currentText())
+        self.refreshScene()
 
     def ownContextMenuEvent(self, event):
 
@@ -84,13 +94,13 @@ class View(QtGui.QMainWindow):
     def deleteItem(self, event):
         item = self.scene.itemAt(event.scenePos())
         if item and isinstance(self.scene.itemAt(event.scenePos()), GraphicNode):
-          deletedNode = self.scene.itemAt(event.scenePos())
-          self.graph.remove_node(deletedNode.id)
-          self.graph.nodesLocations.pop(deletedNode.id)
-          self.redraw()
+            deletedNode = self.scene.itemAt(event.scenePos())
+            self.graph.remove_node(deletedNode.id)
+            self.graph.nodesLocations.pop(deletedNode.id)
+            self.redraw()
 
     def chageItemColor(self, item, color):
-        item
+        return None
 
 
     def ownMousePressEvent(self, event):
@@ -178,6 +188,9 @@ class View(QtGui.QMainWindow):
             weight = self.graph.get_edge_data(id_from, id_to)['weight']
         middle = ((pos_from[0]+pos_to[0])/2, (pos_from[1]+pos_to[1])/2)
         weightItem = QtGui.QGraphicsSimpleTextItem(str(weight))
+        font = QtGui.QFont()
+        font.setPointSize(self.labelSize)
+        weightItem.setFont(font)
         weightItem.setPos(middle[0], middle[1] - 20)
         weightItem.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.scene.addItem(weightItem)
@@ -236,29 +249,17 @@ class View(QtGui.QMainWindow):
         for edge in self.edges:
             if currentGraph.has_edge(edge['edge'][0], edge['edge'][1]):
                 html += str(edge['weight']) + "<br>"
-#                edge['inGraph'] = True
             else:
                 currentGraph.add_edge(edge['edge'][0], edge['edge'][1])
                 print sum(1 for x in nx.simple_cycles(currentGraph.to_directed()))
                 if sum(1 for x in nx.simple_cycles(currentGraph.to_directed()))!=graphEdges+1:
                     html+="<font color='red'>"+str(edge['weight']) + "</font><br>"
-#                    edge['createCycle'] = True
                 else:
                     html+="<font color='green'>"+str(edge['weight']) + "</font><br>"
                 currentGraph.remove_edge(edge['edge'][0], edge['edge'][1])
 
-#        html = ""
-#        for i in range(len(self.weights)):
-#            if self.weights[i][1] == 1:
-#               html+="<font color='red'>"+str(self.weights[i][0]) + "</font> "
-#            elif self.weights[i][1] == 0:
-#               html+= str(self.weights[i][0])
-#        html+="<BR>"
         self.weightWindowVariable.plainTextEdit.clear()
         self.weightWindowVariable.plainTextEdit.appendHtml(html)
-
-
-
 
     def nextAlgorithmStep(self):
         if self.algorithmSteps:
@@ -269,7 +270,6 @@ class View(QtGui.QMainWindow):
                 self.ui.actionNext.setDisabled(True)
                 self.ui.actionPRIMA.setEnabled(True)
                 self.ui.actionKruskal.setEnabled(True)
-
 
     def openFileNodes(self):
         filePath = QtGui.QFileDialog.getOpenFileName()[0]
@@ -323,3 +323,26 @@ class View(QtGui.QMainWindow):
             self.scene.addItem(self.currentEdge)
             self.addEdge(u, v, False)
         self.currentEdge = None
+        
+    def refreshScene(self):
+        linePen = QtGui.QPen()
+        linePen.setWidth(self.lineWidth)
+        linePen.setColor(self.lineColor)
+        labelFont = QtGui.QFont()
+        labelFont.setPointSize(self.labelSize)
+        for item in self.scene.items():
+            if isinstance(item, QtGui.QGraphicsLineItem):
+                item.setPen(linePen)
+                self.scene.removeItem(item)
+                graphicsLine = self.scene.addLine(item.line(), linePen)
+                graphicsLine.setZValue(-1)
+            elif isinstance(item, QtGui.QGraphicsSimpleTextItem):
+                item.setFont(labelFont)
+            elif isinstance(item, GraphicNode):
+                nodeId = item.id
+                self.scene.removeItem(item)
+                self.addNode(nodeId, self.graph.nodesLocations[nodeId][0], self.graph.nodesLocations[nodeId][1], False)
+                
+                
+    
+    

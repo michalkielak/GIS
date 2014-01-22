@@ -149,6 +149,12 @@
        </item>
        <item row="0" column="7">
         <widget class="QComboBox" name="nodeWidthCb">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAtBottom</enum>
+         </property>
          <item>
           <property name="text">
            <string>24</string>
@@ -186,8 +192,57 @@
          </item>
         </widget>
        </item>
-       <item row="1" column="0" colspan="8">
+       <item row="1" column="0" colspan="10">
         <widget class="QGraphicsView" name="graphicsView"/>
+       </item>
+       <item row="0" column="8">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Label size</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="QComboBox" name="labelSizeCb">
+         <item>
+          <property name="text">
+           <string>8</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>10</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>12</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>14</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>18</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>20</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>
